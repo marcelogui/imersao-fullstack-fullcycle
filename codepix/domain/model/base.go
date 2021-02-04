@@ -1,14 +1,16 @@
 package model
 
 import (
-	"github.com/asaskevich/govalidator"
 	"time"
+
+	"github.com/asaskevich/govalidator"
 )
 
 func init() {
 	govalidator.SetFieldsRequiredByDefault(true)
 }
 
+// Base represents
 type Base struct {
 	ID        string    `json:"id" valid:"uuid"`
 	CreatedAt time.Time `json:"created_at" valid:"-"`

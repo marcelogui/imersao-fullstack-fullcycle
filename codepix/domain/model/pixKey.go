@@ -2,11 +2,13 @@ package model
 
 import (
 	"errors"
+	"time"
+
 	"github.com/asaskevich/govalidator"
 	uuid "github.com/satori/go.uuid"
-	"time"
 )
 
+// PixKeyRepositoryInterface is used to provide the methods for DB operations
 type PixKeyRepositoryInterface interface {
 	RegisterKey(pixKey *PixKey) (*PixKey, error)
 	FindKeyByKind(key string, kind string) (*PixKey, error)
@@ -15,6 +17,7 @@ type PixKeyRepositoryInterface interface {
 	FindAccount(id string) (*Account, error)
 }
 
+// PixKey represents a pix key
 type PixKey struct {
 	Base      `valid:"required"`
 	Kind      string   `json:"kind" valid:"notnull"`
@@ -28,11 +31,11 @@ func (pixKey *PixKey) isValid() error {
 	_, err := govalidator.ValidateStruct(pixKey)
 
 	if pixKey.Kind != "email" && pixKey.Kind != "cpf" {
-		return errors.New("invalid type of key")
+		return errors.New("Invalid type of key")
 	}
 
 	if pixKey.Status != "active" && pixKey.Status != "inactive" {
-		return errors.New("invalid status")
+		return errors.New("Invalid status")
 	}
 
 	if err != nil {
@@ -41,8 +44,8 @@ func (pixKey *PixKey) isValid() error {
 	return nil
 }
 
+// NewPixKey creates a new account
 func NewPixKey(kind string, account *Account, key string) (*PixKey, error) {
-
 	pixKey := PixKey{
 		Kind:    kind,
 		Key:     key,
@@ -54,6 +57,7 @@ func NewPixKey(kind string, account *Account, key string) (*PixKey, error) {
 	pixKey.CreatedAt = time.Now()
 
 	err := pixKey.isValid()
+
 	if err != nil {
 		return nil, err
 	}
